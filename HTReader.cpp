@@ -9,12 +9,17 @@ HTReader::HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time, uint16_t r
         _temp_slope(temp_slope), _temp_shift(temp_shift), 
         _humid_slope(humid_slope), _humid_shift(humid_shift){
             dht.begin();
+            reset();
+            }
+
+bool HTReader::reset(){
             _last_sensor_read_time = 0;
             _last_avg_sensor_read_time = 0;
             _error = ! _read_sensors(_ac_t, _ac_h);
             _n_sensor_reads = 1;
             _t = _ac_t;
             _h = _ac_h;
+            return ! _error;
             }
 
 bool HTReader::beginLoop(){

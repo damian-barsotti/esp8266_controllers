@@ -9,6 +9,7 @@ class HTReader {
     public:
     HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time, uint16_t read_avg_time, 
         float temp_slope, float temp_shift, float humid_slope, float humid_shift);
+    bool reset();
     bool beginLoop();
     float getTemp();
     float getHumid();
