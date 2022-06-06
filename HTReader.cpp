@@ -43,7 +43,7 @@ bool HTReader::beginLoop(){
 
     _last_sensor_read_time += _sleeping_time; 
 
-    if (_last_avg_sensor_read_time > _read_avg_time){
+    if (_last_avg_sensor_read_time >= _read_avg_time){
         _ac_t = 0;
         _ac_h = 0;
         _n_sensor_reads = 0;
