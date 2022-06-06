@@ -22,6 +22,8 @@ bool HTReader::reset(){
             return ! _error;
             }
 
+// To run inside loop.
+// Return true if new data ready.
 bool HTReader::beginLoop(){
     float t, h;
 
