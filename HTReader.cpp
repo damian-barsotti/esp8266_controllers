@@ -2,6 +2,8 @@
 
 #include <DHT.h>
 
+// Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+#define SENSOR_DELAY 2000 // In msec
 
 HTReader::HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time, uint16_t read_avg_time,
     float temp_slope, float temp_shift, float humid_slope, float humid_shift)
@@ -29,8 +31,7 @@ bool HTReader::beginLoop(){
 
     _error = false;
 
-    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-    if (_last_sensor_read_time >= 2000){
+    if (_last_sensor_read_time >= sensor_delay()){
         _error = ! _read_sensors(t, h);
         if (!_error){
             _ac_t += t;
@@ -68,6 +69,8 @@ float HTReader::getHumid(){
 bool HTReader::error(){
     return _error;
 }
+
+uint16_t HTReader::sensor_delay(){ return SENSOR_DELAY; }
 
 bool HTReader::_read_sensors(float &t, float &h){
   // Reading temperature or humidity takes about 250 milliseconds!
