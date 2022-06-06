@@ -1,7 +1,5 @@
 #include "HTReader.h"
 
-#include <DHT.h>
-
 // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
 #define SENSOR_DELAY 2000 // In msec
 
