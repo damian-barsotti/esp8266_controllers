@@ -70,7 +70,7 @@ bool HTReader::error(){
     return _error;
 }
 
-uint16_t HTReader::sensor_delay(){ return SENSOR_DELAY; }
+uint16_t HTReader::delay_ms(){ return SENSOR_DELAY; }
 
 bool HTReader::_read_sensors(float &t, float &h){
   // Reading temperature or humidity takes about 250 milliseconds!

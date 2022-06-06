@@ -14,7 +14,7 @@ class HTReader {
     float getTemp();
     float getHumid();
     bool error();
-    uint16_t sensor_delay();
+    uint16_t delay_ms();
     private:
         DHT dht;
         const uint16_t _sleeping_time;
