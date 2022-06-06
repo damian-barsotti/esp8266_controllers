@@ -31,7 +31,7 @@ bool HTReader::beginLoop(){
 
     _error = false;
 
-    if (_last_sensor_read_time >= sensor_delay()){
+    if (_last_sensor_read_time >= delay_ms()){
         _error = ! _read_sensors(t, h);
         if (!_error){
             _ac_t += t;
