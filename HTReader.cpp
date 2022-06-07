@@ -12,6 +12,15 @@ HTReader::HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time, uint16_t n
             reset();
             }
 
+HTReader::HTReader(uint8_t pin, uint8_t type, 
+    float temp_slope, float temp_shift, float humid_slope, float humid_shift)
+     : dht(pin, type), _sleeping_time(0), _n_avg(0),
+        _temp_slope(temp_slope), _temp_shift(temp_shift), 
+        _humid_slope(humid_slope), _humid_shift(humid_shift){
+            dht.begin();
+            reset();
+            }
+
 bool HTReader::reset(){
             _last_sensor_read_time = 0;
             _error = ! _read_sensors(_ac_t, _ac_h);
@@ -26,6 +35,11 @@ bool HTReader::reset(){
 bool HTReader::beginLoop(){
     float t, h;
 
+    // Not to use with deep sleep (snd constructor)
+    if (_n_avg == 0) {
+        _error = true;
+        return false;
+    }
     _error = false;
 
     if (_n_sensor_reads >= _n_avg){
