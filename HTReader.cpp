@@ -14,7 +14,6 @@ HTReader::HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time, uint16_t n
 
 bool HTReader::reset(){
             _last_sensor_read_time = 0;
-            _last_avg_sensor_read_time = 0;
             _error = ! _read_sensors(_ac_t, _ac_h);
             _n_sensor_reads = 1;
             _t = _ac_t;

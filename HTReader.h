@@ -21,7 +21,6 @@ class HTReader {
         const uint16_t _n_avg;
         const float _temp_slope, _temp_shift, _humid_slope, _humid_shift;
         int _last_sensor_read_time;
-        int _last_avg_sensor_read_time;
         int _n_sensor_reads;
         float _ac_t, _ac_h;
         float _t, _h;
