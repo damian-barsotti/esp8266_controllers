@@ -3,9 +3,9 @@
 // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
 #define SENSOR_DELAY 2000 // In msec
 
-HTReader::HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time, uint16_t n_avg,
+HTReader::HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time,
                    float temp_slope, float temp_shift, float humid_slope, float humid_shift)
-    : dht(pin, type), _sleeping_time(sleeping_time), _n_avg(n_avg),
+    : dht(pin, type), _sleeping_time(sleeping_time),
       _temp_slope(temp_slope), _temp_shift(temp_shift),
       _humid_slope(humid_slope), _humid_shift(humid_shift)
 {
@@ -15,7 +15,7 @@ HTReader::HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time, uint16_t n
 
 HTReader::HTReader(uint8_t pin, uint8_t type,
                    float temp_slope, float temp_shift, float humid_slope, float humid_shift)
-    : dht(pin, type), _sleeping_time(0), _n_avg(0),
+    : dht(pin, type), _sleeping_time(0),
       _temp_slope(temp_slope), _temp_shift(temp_shift),
       _humid_slope(humid_slope), _humid_shift(humid_shift)
 {
@@ -26,10 +26,7 @@ HTReader::HTReader(uint8_t pin, uint8_t type,
 bool HTReader::reset()
 {
     _last_sensor_read_time = 0;
-    _error = !_read_sensors(_ac_t, _ac_h);
-    _n_sensor_reads = 1;
-    _t = _ac_t;
-    _h = _ac_h;
+    _error = !_read_sensors(_t, _h);
     return !_error;
 }
 
@@ -39,31 +36,15 @@ bool HTReader::beginLoop()
 {
     float t, h;
 
-    // Not to use with deep sleep (snd constructor)
-    if (_n_avg == 0)
-    {
-        _error = true;
-        return false;
-    }
     _error = false;
-
-    if (_n_sensor_reads >= _n_avg)
-    {
-        _ac_t = 0;
-        _ac_h = 0;
-        _n_sensor_reads = 0;
-    }
 
     if (_last_sensor_read_time >= delay_ms())
     {
         _error = !_read_sensors(t, h);
         if (!_error)
         {
-            _ac_t += t;
-            _ac_h += h;
-            _n_sensor_reads++;
-            _t = _ac_t / _n_sensor_reads;
-            _h = _ac_h / _n_sensor_reads;
+            _t = t;
+            _h = h;
         }
 
         _last_sensor_read_time = 0;
@@ -71,7 +52,7 @@ bool HTReader::beginLoop()
 
     _last_sensor_read_time += _sleeping_time;
 
-    return _n_sensor_reads >= _n_avg;
+    return !_error;
 }
 
 float HTReader::getTemp()
