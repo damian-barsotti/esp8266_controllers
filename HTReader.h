@@ -19,6 +19,7 @@ public:
     float getHumid();
     bool error();
     uint16_t delay_ms();
+    int getMinimumSamplingPeriod();
 
 private:
     DHT dht;
@@ -28,6 +29,7 @@ private:
     float _t, _h;
     bool _error;
     bool _read_sensors(float &t, float &h);
+    uint8_t _model;
 };
 
 #endif

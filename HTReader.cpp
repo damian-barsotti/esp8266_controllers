@@ -1,11 +1,8 @@
 #include "HTReader.h"
 
-// Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-#define SENSOR_DELAY 2000 // In msec
-
 HTReader::HTReader(uint8_t pin, uint8_t model, uint16_t sleeping_time,
                    float temp_slope, float temp_shift, float humid_slope, float humid_shift)
-    : dht(pin, model), _sleeping_time(sleeping_time),
+    : dht(pin, model), _model(model), _sleeping_time(sleeping_time),
       _temp_slope(temp_slope), _temp_shift(temp_shift),
       _humid_slope(humid_slope), _humid_shift(humid_shift)
 {
@@ -15,7 +12,7 @@ HTReader::HTReader(uint8_t pin, uint8_t model, uint16_t sleeping_time,
 
 HTReader::HTReader(uint8_t pin, uint8_t model,
                    float temp_slope, float temp_shift, float humid_slope, float humid_shift)
-    : dht(pin, model), _sleeping_time(0),
+    : dht(pin, model), _model(model), _sleeping_time(0),
       _temp_slope(temp_slope), _temp_shift(temp_shift),
       _humid_slope(humid_slope), _humid_shift(humid_shift)
 {
@@ -35,8 +32,9 @@ bool HTReader::reset()
 bool HTReader::beginLoop()
 {
     float t, h;
+    bool updated,
 
-    _error = false;
+        _error = false;
 
     if (_last_sensor_read_time >= delay_ms())
     {
@@ -46,13 +44,15 @@ bool HTReader::beginLoop()
             _t = t;
             _h = h;
         }
-
+        updated = !_error;
         _last_sensor_read_time = 0;
     }
+    else
+        updated = false;
 
     _last_sensor_read_time += _sleeping_time;
 
-    return !_error;
+    return updated;
 }
 
 float HTReader::getTemp()
@@ -70,7 +70,7 @@ bool HTReader::error()
     return _error;
 }
 
-uint16_t HTReader::delay_ms() { return SENSOR_DELAY; }
+uint16_t HTReader::delay_ms() { return getMinimumSamplingPeriod() * 2; }
 
 bool HTReader::_read_sensors(float &t, float &h)
 {
@@ -94,3 +94,5 @@ bool HTReader::_read_sensors(float &t, float &h)
         return true;
     }
 }
+
+int HTReader::getMinimumSamplingPeriod() { return _model == DHT11 ? 1000 : 2000; }
