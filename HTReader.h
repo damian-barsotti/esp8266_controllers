@@ -8,10 +8,10 @@
 class HTReader
 {
 public:
-    HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time,
+    HTReader(uint8_t pin, uint8_t model, uint16_t sleeping_time,
              float temp_slope, float temp_shift, float humid_slope, float humid_shift);
     // To use with deep sleep without beginLoop
-    HTReader(uint8_t pin, uint8_t type,
+    HTReader(uint8_t pin, uint8_t model,
              float temp_slope, float temp_shift, float humid_slope, float humid_shift);
     bool reset();
     bool beginLoop();

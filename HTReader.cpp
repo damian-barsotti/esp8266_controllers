@@ -3,9 +3,9 @@
 // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
 #define SENSOR_DELAY 2000 // In msec
 
-HTReader::HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time,
+HTReader::HTReader(uint8_t pin, uint8_t model, uint16_t sleeping_time,
                    float temp_slope, float temp_shift, float humid_slope, float humid_shift)
-    : dht(pin, type), _sleeping_time(sleeping_time),
+    : dht(pin, model), _sleeping_time(sleeping_time),
       _temp_slope(temp_slope), _temp_shift(temp_shift),
       _humid_slope(humid_slope), _humid_shift(humid_shift)
 {
@@ -13,9 +13,9 @@ HTReader::HTReader(uint8_t pin, uint8_t type, uint16_t sleeping_time,
     reset();
 }
 
-HTReader::HTReader(uint8_t pin, uint8_t type,
+HTReader::HTReader(uint8_t pin, uint8_t model,
                    float temp_slope, float temp_shift, float humid_slope, float humid_shift)
-    : dht(pin, type), _sleeping_time(0),
+    : dht(pin, model), _sleeping_time(0),
       _temp_slope(temp_slope), _temp_shift(temp_shift),
       _humid_slope(humid_slope), _humid_shift(humid_shift)
 {
