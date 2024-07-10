@@ -1,6 +1,5 @@
 #include "HTReader.h"
 
-
 HTReader::HTReader(uint8_t pin, uint8_t model, uint16_t sleeping_time,
                    float temp_slope, float temp_shift, float humid_slope, float humid_shift)
     : dht(pin, model), _model(model), _sleeping_time(sleeping_time),
@@ -29,7 +28,8 @@ bool HTReader::reset()
     buffT.reset();
     buffH.reset();
     _error = !_read_sensors(_t, _h);
-    if (!_error) {
+    if (!_error)
+    {
         buffT.enQueue(_t);
         buffH.enQueue(_h);
     }
