@@ -1,10 +1,12 @@
 #include "HTReader.h"
 
+
 HTReader::HTReader(uint8_t pin, uint8_t model, uint16_t sleeping_time,
                    float temp_slope, float temp_shift, float humid_slope, float humid_shift)
     : dht(pin, model), _model(model), _sleeping_time(sleeping_time),
       _temp_slope(temp_slope), _temp_shift(temp_shift),
-      _humid_slope(humid_slope), _humid_shift(humid_shift)
+      _humid_slope(humid_slope), _humid_shift(humid_shift),
+      _n_reads(3), buffT(_n_reads), buffH(_n_reads)
 {
     dht.begin();
     reset();
@@ -14,7 +16,8 @@ HTReader::HTReader(uint8_t pin, uint8_t model,
                    float temp_slope, float temp_shift, float humid_slope, float humid_shift)
     : dht(pin, model), _model(model), _sleeping_time(0),
       _temp_slope(temp_slope), _temp_shift(temp_shift),
-      _humid_slope(humid_slope), _humid_shift(humid_shift)
+      _humid_slope(humid_slope), _humid_shift(humid_shift),
+      _n_reads(3), buffT(_n_reads), buffH(_n_reads)
 {
     dht.begin();
     reset();
@@ -23,7 +26,13 @@ HTReader::HTReader(uint8_t pin, uint8_t model,
 bool HTReader::reset()
 {
     _last_sensor_read_time = 0;
+    buffT.reset();
+    buffH.reset();
     _error = !_read_sensors(_t, _h);
+    if (!_error) {
+        buffT.enQueue(_t);
+        buffH.enQueue(_h);
+    }
     return !_error;
 }
 
@@ -31,6 +40,10 @@ bool HTReader::reset()
 // Return true if new data ready.
 bool HTReader::beginLoop()
 {
+    auto sum = [](float m, float n)
+    {
+        return m + n;
+    };
     float t, h;
     bool updated,
 
@@ -41,8 +54,10 @@ bool HTReader::beginLoop()
         _error = !_read_sensors(t, h);
         if (!_error)
         {
-            _t = t;
-            _h = h;
+            buffT.enQueue(t);
+            buffH.enQueue(h);
+            _t = buffT.reduce(sum) / buffT.len();
+            _h = buffH.reduce(sum) / buffH.len();
         }
         updated = !_error;
         _last_sensor_read_time = 0;

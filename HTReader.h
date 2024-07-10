@@ -5,6 +5,8 @@
 
 #include <DHT.h>
 
+#include "../CircularBuffer/CircularBuffer.h"
+
 class HTReader
 {
 public:
@@ -30,6 +32,8 @@ private:
     bool _error;
     bool _read_sensors(float &t, float &h);
     uint8_t _model;
+    int _n_reads;
+    CircularBuffer<float> buffT, buffH;
 };
 
 #endif
