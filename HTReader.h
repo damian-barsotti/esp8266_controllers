@@ -15,6 +15,7 @@ public:
     // To use with deep sleep without beginLoop
     HTReader(uint8_t pin, uint8_t model,
              float temp_slope, float temp_shift, float humid_slope, float humid_shift);
+    bool begin();
     bool reset();
     bool beginLoop();
     float getTemp();

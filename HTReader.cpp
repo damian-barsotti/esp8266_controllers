@@ -8,7 +8,6 @@ HTReader::HTReader(uint8_t pin, uint8_t model, uint16_t sleeping_time,
       _n_reads(3), buffT(_n_reads), buffH(_n_reads)
 {
     dht.begin();
-    reset();
 }
 
 HTReader::HTReader(uint8_t pin, uint8_t model,
@@ -18,8 +17,12 @@ HTReader::HTReader(uint8_t pin, uint8_t model,
       _humid_slope(humid_slope), _humid_shift(humid_shift),
       _n_reads(3), buffT(_n_reads), buffH(_n_reads)
 {
+}
+
+bool HTReader::begin()
+{
     dht.begin();
-    reset();
+    return reset();
 }
 
 bool HTReader::reset()
