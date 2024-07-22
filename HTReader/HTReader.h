@@ -5,9 +5,10 @@
 
 #include <DHT.h>
 
+#include "../Controller/Controller.h"
 #include "../CircularBuffer/CircularBuffer.h"
 
-class HTReader
+class HTReader: public Controller
 {
 public:
     HTReader(uint8_t pin, uint8_t model, uint16_t sleeping_time,
