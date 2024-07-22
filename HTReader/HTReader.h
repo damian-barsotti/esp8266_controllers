@@ -11,10 +11,14 @@ class HTReader
 {
 public:
     HTReader(uint8_t pin, uint8_t model, uint16_t sleeping_time,
-             float temp_slope, float temp_shift, float humid_slope, float humid_shift);
+             float temp_slope, float temp_shift,
+             float humid_slope, float humid_shift,
+             std::size_t n_reads);
     // To use with deep sleep without beginLoop
     HTReader(uint8_t pin, uint8_t model,
-             float temp_slope, float temp_shift, float humid_slope, float humid_shift);
+             float temp_slope, float temp_shift,
+             float humid_slope, float humid_shift,
+             std::size_t n_reads);
     bool begin();
     bool reset();
     bool beginLoop();
@@ -33,7 +37,7 @@ private:
     bool _error;
     bool _read_sensors(float &t, float &h);
     uint8_t _model;
-    int _n_reads;
+    std::size_t _n_reads;
     CircularBuffer<float> buffT, buffH;
 };
 

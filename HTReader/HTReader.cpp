@@ -1,21 +1,25 @@
 #include "HTReader.h"
 
 HTReader::HTReader(uint8_t pin, uint8_t model, uint16_t sleeping_time,
-                   float temp_slope, float temp_shift, float humid_slope, float humid_shift)
+                   float temp_slope, float temp_shift,
+                   float humid_slope, float humid_shift,
+                   std::size_t n_reads)
     : dht(pin, model), _model(model), _sleeping_time(sleeping_time),
       _temp_slope(temp_slope), _temp_shift(temp_shift),
       _humid_slope(humid_slope), _humid_shift(humid_shift),
-      _n_reads(3), buffT(_n_reads), buffH(_n_reads)
+      _n_reads(n_reads), buffT(_n_reads), buffH(_n_reads)
 {
     dht.begin();
 }
 
 HTReader::HTReader(uint8_t pin, uint8_t model,
-                   float temp_slope, float temp_shift, float humid_slope, float humid_shift)
+                   float temp_slope, float temp_shift,
+                   float humid_slope, float humid_shift,
+                   std::size_t n_reads)
     : dht(pin, model), _model(model), _sleeping_time(0),
       _temp_slope(temp_slope), _temp_shift(temp_shift),
       _humid_slope(humid_slope), _humid_shift(humid_shift),
-      _n_reads(3), buffT(_n_reads), buffH(_n_reads)
+      _n_reads(n_reads), buffT(_n_reads), buffH(_n_reads)
 {
 }
 
