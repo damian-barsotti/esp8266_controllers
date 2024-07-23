@@ -46,8 +46,7 @@ bool Wifi::begin()
 
 bool Wifi::reset()
 {
-    _error = false;
-    disconnect();
+    _error = !disconnect();
     return !_error;
 }
 
