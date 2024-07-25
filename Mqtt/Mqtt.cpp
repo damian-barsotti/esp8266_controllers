@@ -14,11 +14,13 @@ Mqtt::Mqtt(Stream &Serial,
            const char *ip, int port,
            const char *client_id, const char *user,
            const char *pwd, const char *log_topic,
+           const char **topics, std::size_t ntopics,
            mqtt_callback_type callback)
     : Serial(Serial),
       ip(ip), port(port),
       client_id(client_id), user(user),
       pwd(pwd), log_topic(log_topic),
+      topics(topics), ntopics(ntopics),
       callback(callback), _attempt(0)
 {
 }
@@ -51,13 +53,21 @@ bool Mqtt::begin()
 
     _error = _attempt >= max_attempt || !subscribe(log_topic);
 
+    for (std::size_t i = 0; i < ntopics; i++)
+        subscribe(topics[i]);
+
     return !_error;
 }
 
 bool Mqtt::subscribe(const char *topic)
 {
-    _error = _error || !client.connected() ||
-             !(client.subscribe(topic) && log(String("Subscribed to ") + topic + " topic"));
+    _error = _error || !client.connected() || !client.subscribe(topic);
+
+    if (_error)
+        log(String("Cannot subscribe to topic ") + topic);
+    else
+        log(String("Subscribed to ") + topic + " topic");
+
     return !_error;
 }
 
