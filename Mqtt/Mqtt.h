@@ -38,4 +38,7 @@ private:
     void serial_println(const char *msg);
 };
 
+// Callback function to be defined
+void callback(char *topic, byte *payload, unsigned int length);
+
 #endif
