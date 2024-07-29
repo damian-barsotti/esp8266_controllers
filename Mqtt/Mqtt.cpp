@@ -121,11 +121,13 @@ bool Mqtt::reset()
 
 bool Mqtt::beginLoop()
 {
-    if (!client.loop()){
+    if (!client.loop())
+    {
         reset();
         return client.loop();
-    } else
-    return true;
+    }
+    else
+        return true;
 }
 
 bool Mqtt::error() { return _error; }
