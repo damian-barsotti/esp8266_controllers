@@ -31,7 +31,11 @@ bool Mqtt::begin()
 
     client.setServer(ip, port);
     client.setCallback(callback);
+    return connect();
+}
 
+bool Mqtt::connect()
+{
     // Loop until we're reconnected
     _attempt = 0;
 
@@ -108,15 +112,21 @@ bool Mqtt::log(String msg)
 bool Mqtt::reset()
 {
     log("Reset");
+    for (std::size_t i = 0; i < ntopics; i++)
+        client.unsubscribe(topics[i]);
     client.disconnect();
     _error = true;
     _attempt = 0;
-    return true;
+    return connect();
 }
 
 bool Mqtt::beginLoop()
 {
-    return client.loop();
+    if (!client.loop()){
+        reset();
+        return client.loop();
+    } else
+    return true;
 }
 
 bool Mqtt::error() { return _error; }

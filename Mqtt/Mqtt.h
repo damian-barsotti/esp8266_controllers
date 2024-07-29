@@ -34,6 +34,7 @@ private:
     mqtt_callback_type callback;
     int _attempt = 0;
     bool subscribe(const char *topic);
+    bool connect();
     void serial_print(const char *msg);
     void serial_println(const char *msg);
 };
