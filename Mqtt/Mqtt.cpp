@@ -4,7 +4,7 @@
 #include <WiFiClient.h>
 #include "Mqtt.h"
 
-const char *state_msgs[] = {
+static const char *state_msgs[] = {
     "Server didn't respond within the keepalive time",
     "Network connection was broken",
     "Network connection failed",
