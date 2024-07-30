@@ -33,10 +33,9 @@ private:
     std::size_t ntopics;
     mqtt_callback_type callback;
     int _attempt = 0;
+    bool subscribes();
     bool subscribe(const char *topic);
     bool connect();
-    void serial_print(const char *msg);
-    void serial_println(const char *msg);
 };
 
 // Callback function to be defined

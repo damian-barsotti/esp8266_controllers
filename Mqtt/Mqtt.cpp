@@ -4,11 +4,42 @@
 #include <WiFiClient.h>
 #include "Mqtt.h"
 
+const char *state_msgs[] = {
+    "Server didn't respond within the keepalive time",
+    "Network connection was broken",
+    "Network connection failed",
+    "Client is disconnected cleanly",
+    "Client is connected",
+    "Server doesn't support the requested version of MQTT",
+    "Server rejected the client identifier",
+    "Server was unable to accept the connection",
+    "Username/password were rejected",
+    "Client was not authorized to connect"};
+
 WiFiClient wifiClient;
 
 PubSubClient client(wifiClient);
 
-static const int max_attempt = 10;
+void serial_print(const char *msg)
+{
+    Serial.print("Mqtt: ");
+    Serial.print(msg);
+}
+
+void serial_println(const char *msg)
+{
+    serial_print(msg);
+    Serial.println("");
+}
+
+void serial_println_status()
+{
+    int st = client.state();
+    serial_print(state_msgs[st + 4]);
+    Serial.print(" (rc=");
+    Serial.print(st);
+    Serial.println(")");
+}
 
 Mqtt::Mqtt(Stream &Serial,
            const char *ip, int port,
@@ -36,43 +67,57 @@ bool Mqtt::connect()
 {
     _error = false;
 
-    // Loop until we're reconnected
-    _attempt = 0;
+    ++_attempt;
 
-    Serial.println("");
-    while (_attempt < max_attempt && !client.connected())
+    if (client.connect(client_id, user, pwd))
     {
-        Serial.println("INFO: Attempting MQTT connection...");
-        // Attempt to connect
-        if (!client.connect(client_id, user, pwd))
+        serial_print("Connected #");
+        Serial.println(String(_attempt));
+        if (subscribes())
         {
-            Serial.print("ERROR: failed, rc=");
-            Serial.println(client.state());
-            Serial.println("DEBUG: try again in 2 seconds");
-            // Wait 2 seconds before retrying
-            delay(2000);
+            _attempt = 0;
+            return true;
         }
-        _attempt++;
+        else
+        {
+            log(String("Cannot subscribe #") + _attempt + " .Disconnecting.");
+            client.disconnect();
+        }
     }
+    else
+        log(String("Cannot connect #") + _attempt);
 
-    _error = _attempt >= max_attempt || !subscribe(log_topic);
+    _error = true;
 
-    for (std::size_t i = 0; i < ntopics; i++)
-        subscribe(topics[i]);
+    return false;
+}
 
-    return !_error;
+bool Mqtt::subscribes()
+{
+    if (!subscribe(log_topic))
+        return false;
+
+    std::size_t i = 0;
+    while (i < ntopics && subscribe(topics[i]))
+        i++;
+
+    return i >= ntopics;
 }
 
 bool Mqtt::subscribe(const char *topic)
 {
-    _error = _error || !client.connected() || !client.subscribe(topic);
+    !client.subscribe(topic);
 
-    if (_error)
-        log(String("Cannot subscribe to topic ") + topic);
-    else
+    if (client.subscribe(topic))
+    {
         log(String("Subscribed to ") + topic + " topic");
-
-    return !_error;
+        return true;
+    }
+    else
+    {
+        log(String("Cannot subscribe to topic ") + topic);
+        return false;
+    }
 }
 
 bool Mqtt::publish(DynamicJsonDocument root, const char *topic)
@@ -103,8 +148,9 @@ bool Mqtt::log(String msg)
     }
     else
     {
-        serial_print("Failed MQTT connection in logger, rc=");
-        Serial.println(client.state());
+        serial_println(msg.c_str());
+        serial_println("Failed MQTT connection in logger.");
+        serial_println_status();
         return false;
     }
 }
@@ -121,27 +167,21 @@ bool Mqtt::reset()
 
 bool Mqtt::beginLoop()
 {
-    if (!client.loop())
+    if (!client.connected())
     {
-        reset();
-        return client.loop();
+        serial_println("Not connected in loop. Reconnect...");
+        serial_println_status();
+        _error = !connect();
     }
     else
-        return true;
+    {
+        _error = false;
+        client.loop();
+    }
+
+    return !_error;
 }
 
 bool Mqtt::error() { return _error; }
 
 int Mqtt::attempt() { return _attempt; }
-
-void Mqtt::serial_print(const char *msg)
-{
-    Serial.print("Mqtt: ");
-    Serial.print(msg);
-}
-
-void Mqtt::serial_println(const char *msg)
-{
-    serial_print(msg);
-    Serial.println("");
-}
