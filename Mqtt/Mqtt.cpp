@@ -179,7 +179,7 @@ bool Mqtt::beginLoop()
 
     if (!_error)
     {
-        log("Loop mqtt cliente")
+        log("Loop mqtt cliente");
         client.loop();
     }
 
