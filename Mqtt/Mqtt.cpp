@@ -180,7 +180,8 @@ bool Mqtt::beginLoop()
     if (!_error)
     {
         log("Loop mqtt cliente");
-        client.loop();
+        for (int i = 0; i < ntopics; i++)
+            client.loop();
     }
 
     return !_error;
