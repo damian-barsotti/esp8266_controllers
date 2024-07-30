@@ -178,7 +178,10 @@ bool Mqtt::beginLoop()
         _error = false;
 
     if (!_error)
+    {
+        log("Loop mqtt cliente")
         client.loop();
+    }
 
     return !_error;
 }
