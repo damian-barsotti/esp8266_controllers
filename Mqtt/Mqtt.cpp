@@ -75,6 +75,7 @@ bool Mqtt::connect()
         Serial.println(String(_attempt));
         if (subscribes())
         {
+            log(String("Connected #") + _attempt);
             _attempt = 0;
             return true;
         }
