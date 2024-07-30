@@ -175,10 +175,10 @@ bool Mqtt::beginLoop()
         _error = !connect();
     }
     else
-    {
         _error = false;
+
+    if (!_error)
         client.loop();
-    }
 
     return !_error;
 }
