@@ -22,6 +22,7 @@ public:
     bool publish(DynamicJsonDocument root, const char *topic);
     bool log(String msg);
     int attempt();
+    void callback_called();
 
 private:
     bool _error = true;
@@ -36,6 +37,7 @@ private:
     bool subscribes();
     bool subscribe(const char *topic);
     bool connect();
+    bool _callback_called = false;
 };
 
 // Callback function to be defined
