@@ -52,7 +52,7 @@ Mqtt::Mqtt(Stream &Serial,
       client_id(client_id), user(user),
       pwd(pwd), log_topic(log_topic),
       topics(topics), ntopics(ntopics),
-      callback(callback), _attempt(0), _callback_called(false)
+      callback(callback), _attempt(0), callback_called(false)
 {
 }
 
@@ -181,9 +181,9 @@ bool Mqtt::beginLoop()
         do
         {
             serial_println("Loop mqtt cliente");
-            _callback_called = false;
+            callback_called = false;
             client.loop();
-        } while (_callback_called);
+        } while (callback_called);
 
     return !_error;
 }
@@ -192,4 +192,4 @@ bool Mqtt::error() { return _error; }
 
 int Mqtt::attempt() { return _attempt; }
 
-void Mqtt::callback_called() { _callback_called = true; }
+void Mqtt::announce_callback() { callback_called = true; }
