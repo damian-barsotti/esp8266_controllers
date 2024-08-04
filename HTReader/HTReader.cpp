@@ -51,10 +51,11 @@ bool HTReader::beginLoop()
     {
         return m + n;
     };
-    float t, h;
-    bool updated,
 
-        _error = false;
+    float t, h;
+    bool updated;
+
+    _error = false;
 
     if (_last_sensor_read_time >= delay_ms())
     {
