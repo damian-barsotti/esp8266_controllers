@@ -178,6 +178,7 @@ bool Mqtt::beginLoop()
         _error = false;
 
     if (!_error)
+    // Loop until callback isn't called again
         do
         {
             serial_println("Loop mqtt cliente");
