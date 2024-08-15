@@ -4,6 +4,9 @@
 #include <WiFiClient.h>
 #include "Mqtt.h"
 
+static const char *payload_available = "online";
+static const char *payload_not_available = "offline";
+
 static const char *state_msgs[] = {
     "Server didn't respond within the keepalive time",
     "Network connection was broken",
@@ -43,14 +46,14 @@ void serial_println_status()
 
 Mqtt::Mqtt(Stream &Serial,
            const char *ip, int port,
-           const char *client_id, const char *user,
-           const char *pwd, const char *log_topic,
+           const char *client_id, const char *user, const char *pwd,
+           const char *will_topic, const char *log_topic,
            const char **topics, std::size_t ntopics,
            mqtt_callback_type callback)
     : Serial(Serial),
       ip(ip), port(port),
       client_id(client_id), user(user),
-      pwd(pwd), log_topic(log_topic),
+      pwd(pwd), will_topic(will_topic), log_topic(log_topic),
       topics(topics), ntopics(ntopics),
       callback(callback), _attempt(0), callback_called(false)
 {
@@ -69,7 +72,7 @@ bool Mqtt::connect()
 
     ++_attempt;
 
-    if (client.connect(client_id, user, pwd))
+    if (client.connect(client_id, user, pwd, will_topic, 1, true, payload_available, true))
     {
         serial_print("Connected #");
         Serial.println(String(_attempt));

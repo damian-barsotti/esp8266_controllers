@@ -11,8 +11,8 @@ class Mqtt : public Controller
 public:
     Mqtt(Stream &Serial,
          const char *ip, int port,
-         const char *client_id, const char *user,
-         const char *pwd, const char *log_topic,
+         const char *client_id, const char *user, const char *pwd,
+         const char *will_topic, const char *log_topic,
          const char **topics, std::size_t ntopics,
          mqtt_callback_type callback);
     bool begin();
@@ -29,7 +29,7 @@ private:
     Stream &Serial;
     const char *ip;
     int port;
-    const char *client_id, *user, *pwd, *log_topic;
+    const char *client_id, *user, *pwd, *log_topic, * will_topic;
     const char **topics;
     std::size_t ntopics;
     mqtt_callback_type callback;
