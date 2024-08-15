@@ -78,12 +78,14 @@ bool Mqtt::connect()
         Serial.println(String(_attempt));
         if (subscribes())
         {
+            client.publish(will_topic, payload_available, true);
             log(String("Connected #") + _attempt);
             _attempt = 0;
             return true;
         }
         else
         {
+            client.publish(will_topic, payload_not_available, true);
             log(String("Cannot subscribe #") + _attempt + " .Disconnecting.");
             client.disconnect();
         }
@@ -181,7 +183,7 @@ bool Mqtt::beginLoop()
         _error = false;
 
     if (!_error)
-    // Loop until callback isn't called again
+        // Loop until callback isn't called again
         do
         {
             serial_println("Loop mqtt cliente");
